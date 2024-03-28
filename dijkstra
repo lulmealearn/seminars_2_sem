@@ -1,0 +1,65 @@
+import heapq
+ 
+BIG_NUM = 10 ** 6
+edge_list = [
+[0, 1], 
+[1, 3], [1, 6], 
+[3, 2], [3, 7], 
+[4, 2],
+ [6, 3],
+ [7, 4], [7, 5]
+]
+
+
+vert_num = 8
+weight_list = [5, 12, 3, 7, 1, 2, 4, 10, 3]
+weight_list = [float(x) for x in weight_list]
+ 
+ 
+def construct_adj_list(edge_list, vert_num):
+    adj_list = [[] for _ in range(vert_num)]
+    for edge in edge_list:
+        src = edge[0]
+        dest = edge[1]
+        adj_list[src].append(dest)
+    return adj_list
+ 
+ 
+adj_list = construct_adj_list(edge_list, vert_num)
+ 
+ 
+def construct_adj_matrix(edge_list, weight_list, vert_num):
+    adj_matrix = [[BIG_NUM for _ in range(vert_num)] for _ in range(vert_num)]
+ 
+    for edge, weight in zip(edge_list, weight_list):
+        adj_matrix[edge[0]][edge[1]] = weight
+    return adj_matrix
+ 
+ 
+adj_matrix = construct_adj_matrix(edge_list, weight_list, vert_num)
+ 
+ 
+def dijkstra(adj_list, adj_matrix, src):
+    vert_num = len(adj_list)
+    dist = [BIG_NUM for _ in range(vert_num)]
+    used = [False for _ in range(vert_num)]
+ 
+    dist[src] = 0
+    pq = [(0, src)] 
+ 
+    while pq:
+        d, u = heapq.heappop(pq)
+        if used[u]:
+            continue
+        used[u] = True
+ 
+        for v in adj_list[u]:
+            weight = adj_matrix[u][v]
+            if dist[v] > dist[u] + weight:
+                dist[v] = dist[u] + weight
+                heapq.heappush(pq, (dist[v], v))
+ 
+    return dist
+ 
+ 
+print(dijkstra(adj_list, adj_matrix, 0))
